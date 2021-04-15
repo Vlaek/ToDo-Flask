@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ task.title }}
+{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1> {{ task.title }} </h1>
+
+    <div class ="alert alert-info">
+        <p>
+            <b>
+                ({{ task.first_date }} - {{ task.second_date }})
+            </b>
+        </p>
+        <p>
+            {{ task.text }}
+        </p>
+       <p>
+            {% if file_array %}
+                Список файлов: <br>
+            {% else %}
+                Список файлов пуст <br>
+            {% endif %}
+
+            {% for file_name in file_array %}
+                • {{ file_name }} <br>
+            {% endfor %}
+       </p>
+        <a href="/task/edit/{{ task.id }}" class="btn btn-warning">Изменить</a>
+        <a href="/task/delete/{{ task.id }}" class="btn btn-warning">Удалить</a>
+        <a href="/" class="btn btn-warning">Назад</a>
+    </div>
+</div>
+{% endblock %}

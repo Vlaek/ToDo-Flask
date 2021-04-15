@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Список задач
+{% endblock %}
+
+{%block header%}
+    <a class="btn btn-success pull-right" href="/add">Добавить новую запись</a><br><br>
+{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+
+    {% if tasks %}
+        <h1> Список задач </h1><br>
+    {% else %}
+        <h1> Список задач пуст </h1><br>
+    {% endif %}
+
+    <form class="navbar-form nafbar-left" method="GET">
+        <div class="form-group">
+            <input type="text" placeholder="Поиск" name="q" value="{{ request.args.get('q', '') }}">
+            <button type="submit" >Искать</button>
+        </div>
+    </form>
+
+    <form method="post">
+        <!-- Здесь будет поиск задач-->
+        <!-- <input type="submit" class="btn btn-success" value="Искать"><br> -->
+
+            {% for i in tasks %}
+            <div class ="alert alert-info">
+                <h2>
+                    {{ i.title }}
+                </h2>
+                <h6>
+                    ({{ i.first_date }} - {{i.second_date}})
+                </h6>
+                <a href="/task/{{ i.id }}" class="btn btn-warning">Подробнее</a>
+                <a href="/task/delete/{{ i.id }}" class="btn btn-warning">Удалить</a>
+            </div>
+            {% endfor %}
+
+    </form>
+</div>
+{% endblock %}
