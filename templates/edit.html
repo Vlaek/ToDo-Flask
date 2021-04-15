@@ -9,8 +9,8 @@
     <h1> Редактирование записи </h1>
     <form method="post" enctype="multipart/form-data">
         <input type="text" id="title" name="title" class="form-control" value="{{ task.title }}"
-               required placeholder="Введите название задачи" maxlength="6"><br>
-        <textarea id="text" name="text" class="form-control" placeholder="Введите текст (необязательно)"> {{ task.text }} </textarea><br>
+               required placeholder="Введите название задачи" maxlength="100"><br>
+        <textarea id="text" name="text" class="form-control" placeholder="Введите текст (необязательно)">{{ task.text }}</textarea><br>
 
         <div class="dates">
             <input type="datetime-local" id="firstDate" value="{{ task.first_date }}" required name="firstDate"/>
@@ -20,8 +20,7 @@
         </div><br>
 
         <input id="file" name="file" type="file"/>
-        <input type="submit" name="action" value="Сохранить файл">
-        <br><br>
+        <input type="submit" name="action" value="Сохранить файл"><br><br>
         <p>
             {% if file_array %}
                 Список файлов: <br>

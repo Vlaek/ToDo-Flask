@@ -140,7 +140,6 @@ def add_task():
         text = request.form['text']
         first_date = request.form['firstDate']
         second_date = request.form['secondDate']
-        file = request.files['file']
 
         task = Task(title=title, text=text, first_date=datetime.strptime(first_date, '%Y-%m-%dT%H:%M'),
                     second_date=datetime.strptime(second_date, '%Y-%m-%dT%H:%M'))
@@ -149,18 +148,9 @@ def add_task():
             db.session.add(task)
             db.session.commit()
 
-            if file:
-                directory = "uploads/" + str(task.id)
-                os.mkdir(directory)
-                file.save(os.path.join(directory, file.filename))
+            return redirect('/')
         except:
             return "Ошибка"
-
-        if request.form['action'] == 'Сохранить файл':
-            return redirect('/add')
-
-        if request.form['action'] == 'Создать':
-            return redirect('/')
 
     else:
         return render_template("add.html")

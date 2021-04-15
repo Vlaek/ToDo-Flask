@@ -18,24 +18,7 @@
             <label> - Дата окончания </label>
         </div><br>
 
-        <input type="file" id="file" name="file"/>
-        <input type="submit" name="action" value="Сохранить файл">
-        <br><br>
-
-        <p>
-            {% if file_array %}
-                Список файлов: <br>
-            {% else %}
-                Список файлов пуст <br>
-            {% endif %}
-
-               {% for file_name in file_array %}
-                   • {{ file_name }} <a href="/task/edit/{{ task.id }}/file/delete/{{ file_name }}"> - Удалить</a> <br>
-               {% endfor %}
-
-        </p>
-
-        <input type="submit" name="action" class="btn btn-success" value="Создать">
+        <input type="submit" class="btn btn-success" value="Создать">
         <a class="btn btn-success" href="/">Отмена</a>
     </form>
 </div>
