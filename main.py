@@ -5,10 +5,9 @@ from datetime import datetime
 
 app = Flask(__name__)
 app.debug = True
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///main.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:pass228@localhost/Task'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
-
 
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -20,6 +19,7 @@ class Task(db.Model):
     def __repr__(self):
         return '<Task %r>' % self.id
 
+db.create_all()
 
 @app.route('/')
 def index():
