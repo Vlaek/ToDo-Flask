@@ -130,7 +130,9 @@ def edit_task(task_id):
             for filename in files:
                 file_array.append(filename)
 
-        return render_template("edit.html", task=task, file_array=file_array)
+        min_date = datetime.now().strftime('%Y-%m-%dT%H:%M')
+
+        return render_template("edit.html", task=task, file_array=file_array, min_date=min_date)
 
 
 @app.route('/add', methods=['POST', 'GET'])
@@ -153,7 +155,9 @@ def add_task():
             return "Ошибка"
 
     else:
-        return render_template("add.html")
+        min_date = datetime.now().strftime('%Y-%m-%dT%H:%M')
+
+        return render_template("add.html", min_date=min_date)
 
 
 if __name__ == '__main__':

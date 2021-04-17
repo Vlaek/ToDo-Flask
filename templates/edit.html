@@ -8,14 +8,19 @@
 <div class="container mt-5">
     <h1> Редактирование записи </h1>
     <form method="post" enctype="multipart/form-data">
-        <input type="text" id="title" name="title" class="form-control" value="{{ task.title }}"
-               required placeholder="Введите название задачи" maxlength="100"><br>
+
+        <input class="form-control" id="title" maxlength="100" name="title" onchange="OnChange()"
+               placeholder="Введите название задачи" type="text" value="{{ task.title }}"><br>
+
         <textarea id="text" name="text" class="form-control" placeholder="Введите текст (необязательно)">{{ task.text }}</textarea><br>
 
         <div class="dates">
-            <input type="datetime-local" id="firstDate" value="{{ task.first_date }}" required name="firstDate"/>
+            <input id="firstDate" max="2038-01-19T22:23:59" min="{{min_date}}" name="firstDate"
+                   onchange="OnChange()" type="datetime-local" value="{{ task.first_date }}"/>
             <label> - Дата начала </label><br>
-            <input type="datetime-local" id="secondDate" value="{{ task.second_date }}" required name="secondDate"/>
+
+            <input id="secondDate" max="2038-01-19T22:23:59" min="{{min_date}}" name="secondDate"
+                   onchange="OnChange()" type="datetime-local" value="{{ task.second_date }}"/>
             <label> - Дата окончания </label>
         </div><br>
 
@@ -34,9 +39,38 @@
 
         </p>
 
-        <input type="submit" class="btn btn-success" name="action" value="Изменить">
+        <input type="submit" class="btn btn-success" id="btn1" name="action" value="Изменить">
         <a href="/task/delete/{{ task.id }}" class="btn btn-success">Удалить</a>
         <a href="/task/{{ task.id }}" class="btn btn-success">Отмена</a>
     </form>
+    <script>
+        document.getElementById("firstDate").onchange = function ()
+        {
+            var input = document.getElementById("secondDate");
+            input.min = this.value;
+            first_date = this.value;
+
+            if (first_date > input.value)
+            {
+                 input.value = '';
+                 OnChange();
+            }
+        }
+
+        function OnChange()
+        {
+            if (document.getElementById("firstDate").value == '' || document.getElementById("secondDate").value == ''
+                || document.getElementById("title").value == '')
+            {
+                document.getElementById("btn1").setAttribute("disabled", "disabled");
+            }
+            else
+            {
+                document.getElementById("btn1").removeAttribute("disabled");
+            }
+        }
+
+        OnChange();
+    </script>
 </div>
 {% endblock %}
