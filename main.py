@@ -110,7 +110,7 @@ def edit_task(task_id):
             except:
                 return "Ошибка"
 
-        elif request.form['action'] == 'Сохранить файл':
+        elif request.form['action'] == 'Загрузить файл':
             file = request.files['file']
 
             if file:

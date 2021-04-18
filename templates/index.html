@@ -5,7 +5,7 @@
 {% endblock %}
 
 {%block header%}
-    <a class="btn btn-success pull-right" href="/add">Добавить новую запись</a><br><br>
+    <a href="/add">Добавить новую запись</a><br>
 {% endblock %}
 
 {% block body %}
@@ -17,17 +17,14 @@
         <h1> Список задач пуст </h1><br>
     {% endif %}
 
-    <form class="navbar-form nafbar-left" method="GET">
+    <form method="GET">
         <div class="form-group">
-            <input type="text" placeholder="Поиск" name="q" value="{{ request.args.get('q', '') }}">
+            <input type="text" placeholder="Поиск" name="q" size="50" value="{{ request.args.get('q', '') }}">
             <button type="submit" >Искать</button>
         </div>
     </form>
 
-    <form method="post">
-        <!-- Здесь будет поиск задач-->
-        <!-- <input type="submit" class="btn btn-success" value="Искать"><br> -->
-
+    <form method="post" >
             {% for i in tasks %}
             <div class ="alert alert-info">
                 <h2>

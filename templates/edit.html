@@ -4,6 +4,10 @@
 Редактирование записи
 {% endblock %}
 
+{%block header%}
+    <a href="/" class="mr-4">Главная</a><br>
+{% endblock %}
+
 {% block body %}
 <div class="container mt-5">
     <h1> Редактирование записи </h1>
@@ -25,7 +29,7 @@
         </div><br>
 
         <input id="file" name="file" type="file"/>
-        <input type="submit" name="action" value="Сохранить файл"><br><br>
+        <input type="submit" name="action" value="Загрузить файл"><br><br>
         <p>
             {% if file_array %}
                 Список файлов: <br>
