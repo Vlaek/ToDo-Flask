@@ -15,7 +15,9 @@
     <div class ="alert alert-info">
         <p>
             <b>
-                ({{ task.first_date }} - {{ task.second_date }})
+                <div id="date">({{ task.first_date }} - {{ task.second_date }}) -
+                    <span id="number"></span>
+                </div>
             </b>
         </p>
         <p>
@@ -36,5 +38,12 @@
         <a href="/task/delete/{{ task.id }}" class="btn btn-warning">Удалить</a>
         <a href="/" class="btn btn-warning">Назад</a>
     </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $.get('http://numbersapi.com/{{ first_date_day }}/{{ first_date_day }}/date', function(data) {
+            $('#number').text(data);
+        });
+        console.log(1)
+    </script>
 </div>
 {% endblock %}

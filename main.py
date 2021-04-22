@@ -9,6 +9,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:pass228@localhost/
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
@@ -19,7 +20,9 @@ class Task(db.Model):
     def __repr__(self):
         return '<Task %r>' % self.id
 
+
 db.create_all()
+
 
 @app.route('/')
 def index():
@@ -41,6 +44,9 @@ def index():
 def task_detail(task_id):
     task = Task.query.get(task_id)
 
+    first_date_day = task.first_date.day
+    first_date_month = task.first_date.month
+
     task.first_date = task.first_date.strftime('%d.%m.%Y %H:%M')
     task.second_date = task.second_date.strftime('%d.%m.%Y %H:%M')
 
@@ -50,7 +56,8 @@ def task_detail(task_id):
         for filename in files:
             file_array.append(filename)
 
-    return render_template("task.html", task=task, file_array=file_array)
+    return render_template("task.html", task=task, file_array=file_array, first_date_day=first_date_day,
+                           first_date_month=first_date_month)
 
 
 @app.route('/task/edit/<int:task_id>/file/delete/<string:file_name>')
