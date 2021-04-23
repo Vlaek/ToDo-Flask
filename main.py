@@ -5,9 +5,10 @@ from datetime import datetime
 
 app = Flask(__name__)
 app.debug = True
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:pass228@localhost/Task'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/mydb'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db.init_app(app)
 
 
 class Task(db.Model):
@@ -47,6 +48,9 @@ def task_detail(task_id):
     first_date_day = task.first_date.day
     first_date_month = task.first_date.month
 
+    second_date_day = task.second_date.day
+    second_date_month = task.second_date.month
+
     task.first_date = task.first_date.strftime('%d.%m.%Y %H:%M')
     task.second_date = task.second_date.strftime('%d.%m.%Y %H:%M')
 
@@ -57,7 +61,7 @@ def task_detail(task_id):
             file_array.append(filename)
 
     return render_template("task.html", task=task, file_array=file_array, first_date_day=first_date_day,
-                           first_date_month=first_date_month)
+            first_date_month=first_date_month, second_date_day=second_date_day, second_date_month=second_date_month)
 
 
 @app.route('/task/edit/<int:task_id>/file/delete/<string:file_name>')
@@ -93,6 +97,9 @@ def delete_task(task_id):
 def edit_task(task_id):
     task = Task.query.get(task_id)
     if request.method == "POST":
+
+        if not os.path.exists("uploads"):
+            os.mkdir("uploads")
 
         if request.form['action'] == 'Изменить':
             task.title = request.form['title']
@@ -137,9 +144,7 @@ def edit_task(task_id):
             for filename in files:
                 file_array.append(filename)
 
-        min_date = datetime.now().strftime('%Y-%m-%dT%H:%M')
-
-        return render_template("edit.html", task=task, file_array=file_array, min_date=min_date)
+        return render_template("edit.html", task=task, file_array=file_array)
 
 
 @app.route('/add', methods=['POST', 'GET'])
@@ -162,9 +167,7 @@ def add_task():
             return "Ошибка"
 
     else:
-        min_date = datetime.now().strftime('%Y-%m-%dT%H:%M')
-
-        return render_template("add.html", min_date=min_date)
+        return render_template("add.html")
 
 
 if __name__ == '__main__':
