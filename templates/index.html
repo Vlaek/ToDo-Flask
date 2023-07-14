@@ -1,43 +1,116 @@
 {% extends 'base.html' %}
 
-{% block title %}
-    Список задач
-{% endblock %}
+{% block title %}Список задач{% endblock %}
 
 {%block header%}
-    <a href="/add">Добавить новую запись</a><br>
+    <form method="GET">
+        <div class="header__search">
+            <input class="header__input" type="text" placeholder="Поиск..." name="q" size="50" value="{{ request.args.get('q', '') }}">
+            <button class="header__btn" type="submit" >Искать</button>
+        </div>
+    </form>
+    <button data-type="modalAdd" class="header__add btn-open" name="action" id="headerBtnAdd">Добавить задачу</button>
 {% endblock %}
 
 {% block body %}
-<div class="container mt-5">
-
-    {% if tasks %}
-        <h1> Список задач </h1><br>
-    {% else %}
-        <h1> Список задач пуст </h1><br>
-    {% endif %}
-
-    <form method="GET">
-        <div class="form-group">
-            <input type="text" placeholder="Поиск" name="q" size="50" value="{{ request.args.get('q', '') }}">
-            <button type="submit" >Искать</button>
-        </div>
-    </form>
-
-    <form method="post" >
-            {% for i in tasks %}
-            <div class ="alert alert-info">
-                <h2>
-                    {{ i.title }}
-                </h2>
-                <h6>
-                    ({{ i.first_date }} - {{i.second_date}})
-                </h6>
-                <a href="/task/{{ i.id }}" class="btn btn-warning">Подробнее</a>
-                <a href="/task/delete/{{ i.id }}" class="btn btn-warning">Удалить</a>
+<form method="post">
+    <div id="modalAdd" class="modal" tabindex="-1" role="dialog">
+        <div class="modal__content">
+            <div class="modal__header">
+                <p class="modal__title">Добавление задачи</p>
+                <button type="button" class="btn-close close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-            {% endfor %}
-
-    </form>
+            <div class="modal__body">
+                <input class="modal__input" name="id" hidden>
+                <div class="modal__item">
+                    <input class="modal__input" id="title" maxlength="100" name="title" placeholder="Введите название задачи...">
+                    <label class="modal__label" for="title">Название задачи</label>
+                </div>
+                <div class="modal__item">
+                    <textarea class="modal__textarea" id="text" name="text" placeholder="Введите текст..."></textarea>
+                    <label class="modal__label" for="text">Текст</label>
+                </div>
+                <div id="modal__dates">
+                    <div class="modal__item">
+                        <input class="modal__input" id="startDate" max="2038-01-19T22:23:59" min="2000-01-01T00:00:00" name="startDate" type="datetime-local"/>
+                        <label for="startDate" class="modal__label">Дата начала</label>
+                    </div>
+                    <div class="modal__item">
+                        <input class="modal__input" id="endDate" max="2038-01-19T22:23:59" min="2000-01-01T00:00:00" name="endDate" type="datetime-local"/>
+                        <label for="endDate" class="modal__label">Дата окончания</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal__footer">
+                <div class="modal__control">
+                    <input class="modal__btn modalBtnAdd" type="submit" name="action" disabled value="Добавить">
+                    <button class="modal__btn close" type="button" data-dismiss="modal">Отмена</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="modalEdit" class="modal" tabindex="-1" role="dialog">
+        <div class="modal__content">
+            <div class="modal__header">
+                <p class="modal__title">Редактирование сотрудника</p>
+                <button type="button" class="btn-close close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal__body">
+                <input class="modal__input" name="id2" hidden>
+                <div class="modal__item">
+                    <input class="modal__input" id="title2" maxlength="100" name="title2" placeholder="Введите название задачи...">
+                    <label class="modal__label" for="title2">Название задачи</label>
+                </div>
+                <div class="modal__item">
+                    <textarea class="modal__textarea" id="text2" name="text2" placeholder="Введите текст..."></textarea>
+                    <label class="modal__label" for="text2">Текст</label>
+                </div>
+                <div id="modal__dates2">
+                    <div class="modal__item">
+                        <input class="modal__input" id="startDate2" max="2038-01-19T22:23:59" min="2000-01-01T00:00:00" name="startDate2" type="datetime-local"/>
+                        <label for="startDate" class="modal__label">Дата начала</label>
+                    </div>
+                    <div class="modal__item">
+                        <input class="modal__input" id="endDate2" max="2038-01-19T22:23:59" min="2000-01-01T00:00:00" name="endDate2" type="datetime-local"/>
+                        <label for="endDate" class="modal__label">Дата окончания</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal__footer">
+                <div class="modal__control">
+                    <input class="modal__btn modalBtnAdd" type="submit" name="action" disabled value="Изменить">
+                    <button class="modal__btn close" type="button" data-dismiss="modal">Отмена</button>
+                 </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% if not tasks %}
+    <div class="message">
+        <h2 class="message__text"> Список задач пуст...</h2>
+    </div>
+{% endif %}
+{% for task in tasks %}
+<div class="_anim-items _anim-no-hide">
+    <div class="task _anim-show ">
+        <div class="task__header">
+            <a href="/task/{{ task.id }}" class="task__title">{{ task.title }}</a>
+            <a href="/task/delete/{{ task.id }}" class="task__delete" title="Удалить задачу"><span aria-hidden="true">&times;</span></a>
+        </div>
+        <div class="task__main">
+            <p class="task__date">{{ task.start_date }} - {{task.end_date}}</p>
+            <p class="task__text">{{ task.text }}</p>
+        </div>
+        <div class="task__footer">
+            <a href="/task/delete/{{ task.id }}" class="task__detail">Удалить</a>
+            <a class="task__detail btn-open" href="#" id="editBtn" data-type="modalEdit" data-id="{{task.id}}" data-title="{{task.title}}" data-startDate="{{task.start_date}}" data-endDate="{{task.end_date}}" data-text="{{task.text}}">Изменить</a>
+            <a href="/task/{{ task.id }}" class="task__detail">Подробнее</a>
+        </div>
+    </div>
 </div>
+{% endfor %}
 {% endblock %}

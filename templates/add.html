@@ -1,115 +1,35 @@
 {% extends 'base.html' %}
 
-{% block title %}
-Добавление записи
-{% endblock %}
+{% block title %}Добавление задачи{% endblock %}
 
 {%block header%}
-    <a href="/" class="mr-4">Главная</a><br>
+    <a href="/" class="header__back">Назад</a>
 {% endblock %}
 
 {% block body %}
-
-<div class="container mt-5">
-    <h1> Добавление записи </h1>
-    <form method="post" enctype="multipart/form-data">
-
-        <input class="form-control" id="title" maxlength="100" name="title" onchange="OnChange()"
-               placeholder="Введите название задачи" type="text"><br>
-
-        <textarea id="text" name="text" class="form-control" placeholder="Введите текст (необязательно)"></textarea><br>
-
-        <div id="dates">
-            <input id="firstDate" max="2038-01-19T22:23:59" min="2000-01-01T00:00:00" name="firstDate"
-                   onchange="OnChange() Init()" type="datetime-local"/>
-            <label> - Дата начала </label><br>
-
-            <input id="secondDate" max="2038-01-19T22:23:59" min="2000-01-01T00:00:00" name="secondDate"
-                   onchange="OnChange()" type="datetime-local"/>
-            <label> - Дата окончания </label>
-        </div><br>
-
-        <div>
-            1)
-            <span id="fact1"></span><br>
+<form method="post" enctype="multipart/form-data">
+    <div class="task">
+        <div class="task__header">
+            <p class="task__title"> Добавление задачи</p>
         </div>
-        <div>
-            2)
-            <span id="fact2"></span>
-        </div> <br>
+        <div class="task__main">
+            <label for="title" class="task__label">Название задачи</label>
+            <input class="task__input" maxlength="100" id="title" name="title" type="text">
 
-        <input id="btn1" type="submit" class="btn btn-success" value="Создать">
-        <a class="btn btn-success" href="/">Отмена</a>
-    </form>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script>
-        document.getElementById("firstDate").onchange = function ()
-        {
-            var input = document.getElementById("secondDate");
-            input.min = this.value;
-            first_date = this.value;
+            <label for="text" class="task__label">Текст (необязательно)</label>
+            <textarea name="text" id="text" class="task__textarea"></textarea>
 
-            if (first_date > input.value)
-            {
-                 input.value = '';
-                 $('#fact2').text('');
-            }
+            <div id="task__dates">
+                <label for="startDate" class="task__label">Дата начала</label>
+                <input class="task__input" id="startDate" max="2038-01-19T22:23:59" min="2000-01-01T00:00:00" name="firstDate" type="datetime-local"/>
 
-            OnChange();
-        }
-
-        function OnChange()
-        {
-            if (document.getElementById("firstDate").value == '' || document.getElementById("secondDate").value == ''
-                || document.getElementById("title").value == '')
-            {
-                document.getElementById("btn1").setAttribute("disabled", "disabled");
-            }
-            else
-            {
-                document.getElementById("btn1").removeAttribute("disabled");
-            }
-
-            Init();
-        }
-
-        function Init()
-        {
-            if (document.getElementById("firstDate").value != '')
-            {
-                var dateInput = document.getElementById('firstDate');
-                var myDate = dateInput.value.replace('T', '-');
-                var myDateArray = myDate.split('-');
-                var year = myDateArray[0];
-                var month = myDateArray[1];
-                var day = myDateArray[2];
-
-                var address = 'http://numbersapi.com/' + month + '/' + day + '/date'
-
-                $.get(address, function(data) {
-                    $('#fact1').text(data);
-                });
-            }
-
-            if (document.getElementById("secondDate").value != '')
-            {
-                var dateInput = document.getElementById('secondDate');
-                var myDate = dateInput.value.replace('T', '-');
-                var myDateArray = myDate.split('-');
-                var year = myDateArray[0];
-                var month = myDateArray[1];
-                var day = myDateArray[2];
-
-                var address = 'http://numbersapi.com/' + month + '/' + day + '/date'
-
-                $.get(address, function(data) {
-                    $('#fact2').text(data);
-                });
-            }
-        }
-
-        Init();
-        OnChange();
-    </script>
-</div>
+                <label for="endDate" class="task__label">Дата окончания</label>
+                <input class="task__input" id="endDate" max="2038-01-19T22:23:59" min="2000-01-01T00:00:00" name="secondDate" type="datetime-local"/>
+            </div>
+        </div>
+        <div class="task__footer">
+            <input id="btn1" type="submit" class="task__create" value="Создать">
+        </div>
+    </div>
+</form>
 {% endblock %}

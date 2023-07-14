@@ -3,15 +3,18 @@
     <head>
         <meta charset="UTF-8">
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}" />
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-            <title>{% block title %}{% endblock %}</title>
+        <title>{% block title %}{% endblock %}</title>
     </head>
     <body>
-        <header class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3">
-                <h3  class="my-0 mr-md-auto text-white">ToDoList</h3>
-
+        <header>
+            <div class="header">
+                <a href="/" class="header__title">ToDo List</a>
                 {% block header %} {% endblock %}
+            </div>
         </header>
-        {% block body %}{% endblock %}
+        <main class="main">
+            {% block body %}{% endblock %}
+        </main>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/script.js') }}"></script>
     </body>
 </html>

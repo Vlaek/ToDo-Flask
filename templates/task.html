@@ -1,73 +1,78 @@
 {% extends 'base.html' %}
 
-{% block title %}
-{{ task.title }}
-{% endblock %}
+{% block title %}{{ task.title }}{% endblock %}
 
 {%block header%}
-    <a href="/" class="mr-4">Главная</a><br>
+    <a href="/" class="header__back">Назад</a>
 {% endblock %}
 
 {% block body %}
-<div class="container mt-5">
-    <h1> {{ task.title }} </h1>
-
-    <div class ="alert alert-info">
-
-        <b>
-            ({{ task.first_date }} - {{ task.second_date }})
-        </b>
-
-        <hr align="center" size="2" color="#ff0000" />
-
-        <div>
-            1)
-            <span id="fact1"></span><br>
+<form method="post">
+    <div id="modalEdit" class="modal" tabindex="-1" role="dialog">
+        <div class="modal__content">
+            <div class="modal__header">
+                <p class="modal__title">Редактирование сотрудника</p>
+                <button type="button" class="btn-close close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal__body">
+                <input class="modal__input" name="id" hidden>
+                <div class="modal__item">
+                    <input class="modal__input" id="title2" maxlength="100" name="title" placeholder="Введите название задачи...">
+                    <label class="modal__label" for="title2">Название задачи</label>
+                </div>
+                <div class="modal__item">
+                    <textarea class="modal__textarea" id="text2" name="text" placeholder="Введите текст..."></textarea>
+                    <label class="modal__label" for="text2">Текст</label>
+                </div>
+                <div id="modal__dates2">
+                    <div class="modal__item">
+                        <input class="modal__input" id="startDate2" max="2038-01-19T22:23:59" min="2000-01-01T00:00:00" name="startDate" type="datetime-local"/>
+                        <label for="startDate2" class="modal__label">Дата начала</label>
+                    </div>
+                    <div class="modal__item">
+                        <input class="modal__input" id="endDate2" max="2038-01-19T22:23:59" min="2000-01-01T00:00:00" name="endDate" type="datetime-local"/>
+                        <label for="endDate2" class="modal__label">Дата окончания</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal__footer">
+                <div class="modal__control">
+                    <input class="modal__btn modalBtnAdd" type="submit" name="action" disabled value="Изменить">
+                    <button class="modal__btn close" type="button" data-dismiss="modal">Отмена</button>
+                 </div>
+            </div>
         </div>
-
-        <div>
-            2)
-            <span id="fact2"></span>
-        </div>
-
-        <hr align="center" size="2" color="#ff0000" />
-
-        <p>
-            {% if task.text %}
-                {{ task.text }}
-            {% else %}
-                Текст пустой
-            {% endif %}
-        </p>
-
-        <hr align="center" size="2" color="#ff0000" />
-
-       <p>
-            {% if file_array %}
-                Список файлов: <br>
-            {% else %}
-                Список файлов пуст <br>
-            {% endif %}
-
-            {% for file_name in file_array %}
-                • {{ file_name }} <br>
-            {% endfor %}
-       </p>
-
-        <a href="/task/edit/{{ task.id }}" class="btn btn-warning">Изменить</a>
-        <a href="/task/delete/{{ task.id }}" class="btn btn-warning">Удалить</a>
-        <a href="/" class="btn btn-warning">Назад</a>
     </div>
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script>
-        $.get('http://numbersapi.com/{{ first_date_month }}/{{ first_date_day }}/date', function(data) {
-            $('#fact1').text(data);
-        });
-        $.get('http://numbersapi.com/{{ second_date_month }}/{{ second_date_day }}/date', function(data) {
-            $('#fact2').text(data);
-        });
-    </script>
-
+</form>
+<div class="task">
+    <div class="task__header">
+        <a href="/task/edit/{{ task.id }}" class="task__title"> {{ task.title }} </a>
+        <a href="/task/delete/{{ task.id }}" class="task__delete" title="Удалить задачу"><span aria-hidden="true">&times;</span></a>
+    </div>
+    <div class="task__main">
+        <p class="task__date">{{ task.start_date }} - {{task.end_date}}</p>
+        {% if task.text %}
+            <p class="task__text task__text-detail">{{ task.text }}</p>
+        {% else %}
+            <p class="task__text">Текст пустой</p>
+        {% endif %}
+        <div class="task__file">
+            {% if file_array %}
+                <p class="file__title">Список файлов:</p>
+                <ul class="file__list">
+                    {% for file_name in file_array %}
+                        <li class="file__item">{{ file_name }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <div class="task__footer">
+            <a href="/task/delete/{{ task.id }}" class="task__detail">Удалить</a>
+            <a class="task__detail btn-open" href="#" id="editBtn" data-type="modalEdit" data-id="{{task.id}}" data-title="{{task.title}}" data-startDate="{{task.start_date}}" data-endDate="{{task.end_date}}" data-text="{{task.text}}">Изменить</a>
+        </div>
+    </div>
 </div>
 {% endblock %}
+

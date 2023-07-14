@@ -4,74 +4,113 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
 app = Flask(__name__)
-app.debug = True
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todo.db'
 db = SQLAlchemy(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/mydb'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db.init_app(app)
 
 
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     text = db.Column(db.Text, nullable=True)
-    first_date = db.Column(db.DateTime(), default=datetime.now)
-    second_date = db.Column(db.DateTime(), default=datetime.min)
+    start_date = db.Column(db.DateTime(), default=datetime.now)
+    end_date = db.Column(db.DateTime(), default=datetime.min)
 
     def __repr__(self):
         return '<Task %r>' % self.id
 
 
-db.create_all()
+with app.app_context():
+    db.create_all()
 
 
-@app.route('/')
+@app.route('/', methods=['POST', 'GET'])
 def index():
-    q = request.args.get('q')
+    if request.method == "GET":
+        q = request.args.get('q')
 
-    if q:
-        tasks = Task.query.filter(Task.title.contains(q) | Task.text.contains(q)).all()
-    else:
-        tasks = Task.query.all()
+        if q:
+            tasks = Task.query.filter(Task.title.contains(q) | Task.text.contains(q)).all()
+        else:
+            tasks = Task.query.order_by(Task.id.desc()).all()
 
-    for i in tasks:
-        i.first_date = i.first_date.strftime('%d.%m.%Y %H:%M')
-        i.second_date = i.second_date.strftime('%d.%m.%Y %H:%M')
+        for task in tasks:
+            task.start_date = task.start_date.strftime('%d.%m.%Y %H:%M')
+            task.end_date = task.end_date.strftime('%d.%m.%Y %H:%M')
 
-    return render_template("index.html", tasks=tasks)
+        return render_template("index.html", tasks=tasks)
 
+    if request.method == "POST":
+        if request.form['action'] == 'Добавить':
+            title = request.form['title']
+            text = request.form['text']
+            start_date = request.form['startDate']
+            end_date = request.form['endDate']
 
-@app.route('/task/<int:task_id>')
+            start_date = datetime.strptime(start_date, '%Y-%m-%dT%H:%M')
+            end_date = datetime.strptime(end_date, '%Y-%m-%dT%H:%M')
+
+            task = Task(title=title, text=text, start_date=start_date, end_date=end_date)
+
+            try:
+                db.session.add(task)
+                db.session.commit()
+
+                return redirect('/')
+            except:
+                return "Ошибка"
+
+        elif request.form['action'] == 'Изменить':
+            id = request.form['id2']
+            task = Task.query.get(id)
+            task.title = request.form['title2']
+            task.text = request.form['text2']
+            task.start_date = request.form['startDate2']
+            task.end_date = request.form['endDate2']
+
+            task.start_date = datetime.strptime(task.start_date, '%Y-%m-%dT%H:%M')
+            task.end_date = datetime.strptime(task.end_date, '%Y-%m-%dT%H:%M')
+
+            try:
+                db.session.commit()
+
+                return redirect('/')
+            except:
+                return "Ошибка"
+
+@app.route('/task/<int:task_id>', methods=['POST', 'GET'])
 def task_detail(task_id):
-    task = Task.query.get(task_id)
+    if request.method == "GET":
+        task = Task.query.get(task_id)
 
-    first_date_day = task.first_date.day
-    first_date_month = task.first_date.month
+        task.start_date = task.start_date.strftime('%d.%m.%Y %H:%M')
+        task.end_date = task.end_date.strftime('%d.%m.%Y %H:%M')
 
-    second_date_day = task.second_date.day
-    second_date_month = task.second_date.month
+        return render_template("task.html", task=task)
 
-    task.first_date = task.first_date.strftime('%d.%m.%Y %H:%M')
-    task.second_date = task.second_date.strftime('%d.%m.%Y %H:%M')
+    if request.method == "POST":
+        id = request.form['id']
+        task = Task.query.get(id)
+        task.title = request.form['title']
+        task.text = request.form['text']
+        task.start_date = request.form['startDate']
+        task.end_date = request.form['endDate']
 
-    file_array = []
-
-    for root, dirs, files in os.walk("uploads/" + str(task.id)):
-        for filename in files:
-            file_array.append(filename)
-
-    return render_template("task.html", task=task, file_array=file_array, first_date_day=first_date_day,
-            first_date_month=first_date_month, second_date_day=second_date_day, second_date_month=second_date_month)
+        print(id)
+        print(task)
+        print(task.title)
+        print(task.start_date)
+        print(task.end_date)
 
 
-@app.route('/task/edit/<int:task_id>/file/delete/<string:file_name>')
-def edit_file_delete(task_id, file_name):
-    directory_folder = os.path.join(os.path.abspath(os.path.dirname(__file__)), "uploads/" + str(task_id))
+        task.start_date = datetime.strptime(task.start_date, '%Y-%m-%dT%H:%M')
+        task.end_date = datetime.strptime(task.end_date, '%Y-%m-%dT%H:%M')
 
-    os.remove(directory_folder + "/" + file_name)
+        try:
+            db.session.commit()
 
-    return redirect(url_for('edit_task', task_id=task_id))
-
+            return redirect('/')
+        except:
+            return "Ошибка"
 
 @app.route('/task/delete/<int:task_id>')
 def delete_task(task_id):
@@ -93,82 +132,5 @@ def delete_task(task_id):
         return "Ошибка"
 
 
-@app.route('/task/edit/<int:task_id>', methods=['POST', 'GET'])
-def edit_task(task_id):
-    task = Task.query.get(task_id)
-    if request.method == "POST":
-
-        if not os.path.exists("uploads"):
-            os.mkdir("uploads")
-
-        if request.form['action'] == 'Изменить':
-            task.title = request.form['title']
-            task.text = request.form['text']
-            task.first_date = request.form['firstDate']
-            task.second_date = request.form['secondDate']
-
-            task.first_date = datetime.strptime(task.first_date, '%Y-%m-%dT%H:%M')
-            task.second_date = datetime.strptime(task.second_date, '%Y-%m-%dT%H:%M')
-
-            file = request.files['file']
-
-            if file:
-                directory = "uploads/" + str(task_id)
-                if not os.path.exists(directory):
-                    os.mkdir(directory)
-                file.save(os.path.join(directory, file.filename))
-
-            try:
-                db.session.commit()
-                return redirect('/')
-            except:
-                return "Ошибка"
-
-        elif request.form['action'] == 'Загрузить файл':
-            file = request.files['file']
-
-            if file:
-                directory = "uploads/" + str(task_id)
-                if not os.path.exists(directory):
-                    os.mkdir(directory)
-                file.save(os.path.join(directory, file.filename))
-
-            return redirect('/task/edit/' + str(task.id))
-    else:
-        task.first_date = task.first_date.strftime('%Y-%m-%dT%H:%M')
-        task.second_date = task.second_date.strftime('%Y-%m-%dT%H:%M')
-
-        file_array = []
-
-        for root, dirs, files in os.walk("uploads/" + str(task.id)):
-            for filename in files:
-                file_array.append(filename)
-
-        return render_template("edit.html", task=task, file_array=file_array)
-
-
-@app.route('/add', methods=['POST', 'GET'])
-def add_task():
-    if request.method == "POST":
-        title = request.form['title']
-        text = request.form['text']
-        first_date = request.form['firstDate']
-        second_date = request.form['secondDate']
-
-        task = Task(title=title, text=text, first_date=datetime.strptime(first_date, '%Y-%m-%dT%H:%M'),
-                    second_date=datetime.strptime(second_date, '%Y-%m-%dT%H:%M'))
-
-        try:
-            db.session.add(task)
-            db.session.commit()
-
-            return redirect('/')
-        except:
-            return "Ошибка"
-
-    else:
-        return render_template("add.html")
-
-
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
