@@ -58,19 +58,9 @@
         {% else %}
             <p class="task__text">Текст пустой</p>
         {% endif %}
-        <div class="task__file">
-            {% if file_array %}
-                <p class="file__title">Список файлов:</p>
-                <ul class="file__list">
-                    {% for file_name in file_array %}
-                        <li class="file__item">{{ file_name }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        </div>
         <div class="task__footer">
-            <a href="/task/delete/{{ task.id }}" class="task__detail">Удалить</a>
-            <a class="task__detail btn-open" href="#" id="editBtn" data-type="modalEdit" data-id="{{task.id}}" data-title="{{task.title}}" data-startDate="{{task.start_date}}" data-endDate="{{task.end_date}}" data-text="{{task.text}}">Изменить</a>
+            <a href="/task/delete/{{ task.id }}" class="task__btn">Удалить</a>
+            <a class="task__btn btn-open" href="#" id="editBtn" data-type="modalEdit" data-id="{{task.id}}" data-title="{{task.title}}" data-startDate="{{task.start_date}}" data-endDate="{{task.end_date}}" data-text="{{task.text}}">Изменить</a>
         </div>
     </div>
 </div>

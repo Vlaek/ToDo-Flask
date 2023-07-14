@@ -1,3 +1,5 @@
+// Animation
+
 const animItems = document.querySelectorAll('._anim-items')
 
 if (animItems.length > 0) {
@@ -37,6 +39,7 @@ if (animItems.length > 0) {
     }, 300);
 }
 
+// Modal Window
 
 const close = document.getElementsByClassName('close');
 const openBtn = document.getElementsByClassName('btn-open');

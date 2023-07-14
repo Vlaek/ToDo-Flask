@@ -1,5 +1,4 @@
-import os
-from flask import Flask, render_template, url_for, request, redirect
+from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
@@ -95,19 +94,11 @@ def task_detail(task_id):
         task.start_date = request.form['startDate']
         task.end_date = request.form['endDate']
 
-        print(id)
-        print(task)
-        print(task.title)
-        print(task.start_date)
-        print(task.end_date)
-
-
         task.start_date = datetime.strptime(task.start_date, '%Y-%m-%dT%H:%M')
         task.end_date = datetime.strptime(task.end_date, '%Y-%m-%dT%H:%M')
 
         try:
             db.session.commit()
-
             return redirect('/')
         except:
             return "Ошибка"
@@ -115,14 +106,6 @@ def task_detail(task_id):
 @app.route('/task/delete/<int:task_id>')
 def delete_task(task_id):
     task = Task.query.get_or_404(task_id)
-
-    directory_folder = os.path.join(os.path.abspath(os.path.dirname(__file__)), "uploads/" + str(task.id))
-
-    if os.path.exists(directory_folder):
-        for root, dirs, files in os.walk("uploads/" + str(task.id)):
-            for filename in files:
-                os.remove(directory_folder + "/" + filename)
-        os.rmdir(directory_folder)
 
     try:
         db.session.delete(task)

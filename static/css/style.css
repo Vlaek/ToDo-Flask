@@ -1,4 +1,4 @@
-/*Обнуление*/
+/* Обнуление */
 
 * {
 	padding: 0;
@@ -82,6 +82,9 @@ body, html {
     height: 100%;
 }
 
+
+/* Header */
+
 header {
     height: 75px;
 }
@@ -151,6 +154,14 @@ header {
 }
 
 
+/* Main */
+
+.main {
+    width: 1000px;
+    margin: 0 auto;
+    padding-bottom: 50px;
+}
+
 .message {
     display: flex;
     justify-content: center;
@@ -160,12 +171,7 @@ header {
 }
 
 
-.main {
-    width: 1000px;
-    margin: 0 auto;
-    padding-bottom: 50px;
-
-}
+/* Task */
 
 .task {
     display: flex;
@@ -188,10 +194,12 @@ header {
 }
 
 .task__title {
+    width: 95%;
     padding: 15px;
     font-size: 32px;
     cursor: pointer;
     color: black;
+	overflow: hidden;
 }
 .task__title:hover {
     color: #eb2650;
@@ -247,45 +255,19 @@ header {
     padding: 10px;
 }
 
-.task__detail {
+.task__btn {
     text-decoration: underline;
     color: black;
     font-size: 18px;
     margin-left: 30px;
 }
-.task__detail:hover {
+.task__btn:hover {
     color: #eb2650;
     text-decoration: underline;
 }
 
-.task__file {
-    margin: 10px;
-}
 
-.file__title {
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
-.file__list {
-    margin-left: 25px;
-}
-
-.file__item {
-    list-style: circle;
-}
-
-.task__input {
-    height: 35px;
-    padding: 5px;
-    font-size: 18px;
-}
-
-.task__label {
-    display: block;
-}
-
+/* Animation */
 
 ._anim-show {
     transform: translate(-200%, 0);
@@ -404,8 +386,6 @@ header {
     color: #eb2650;
 }
 
-
-
 .modal__footer {
     display: flex;
     justify-content: space-between;
@@ -424,16 +404,4 @@ header {
 }
 .modal__btn:hover {
     background: #eb2650;
-}
-
-.btnDisabled {
-    background: #959595;
-    color: #5f5f5f;
-}
-.btnDisabled:hover {
-    background: #959595;
-}
-
-select[disabled] {
-  background: #959595;
 }
